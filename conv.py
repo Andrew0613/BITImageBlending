@@ -34,6 +34,8 @@ class Conv2d:
         tensor = img_new
         return tensor
     def pyrDown(self,img,stride=2,padding=2):
+        # new_img=cv2.filter2D(img,-1,kernel=self.kernel)
+        # new_img=self.pooling(new_img)
         new_img=self.convolution(img,stride,padding)
         return new_img
     def pyrUp(self,img,stride=1,padding=2):#unpooling
@@ -41,6 +43,16 @@ class Conv2d:
         # cv2.imshow("unpooled_img",unpooled_img)
         new_img=self.convolution(unpooled_img,stride,padding)
         return new_img*4
+    def pooling(self,img):
+        new_img=[]
+        for i in range(len(img)):
+            array=[]
+            if i%2==0:
+                for j in range(len(img[i])):
+                    if j%2==0:
+                        array.append(img[i][j])
+                new_img.append(array)
+        return np.array(new_img)
     def unpooling(self,img):
         new_img=[]
         for i in range(len(img)):
@@ -57,3 +69,20 @@ class Conv2d:
         new_img=np.array(new_img)
         # print("new_img shape:",new_img.shape)
         return new_img
+if __name__ == '__main__':
+    orange_dir="/Users/puyuandong613/Downloads/ImageBlending-master/1.png"
+    apple_dir="/Users/puyuandong613/Downloads/ImageBlending-master/apple.png"
+    conv2d=Conv2d(kernel=np.array([
+            [1, 4, 6, 4, 1],
+            [4,16,24,16, 4],
+            [6,24,36,24, 6],
+            [4,16,24,16, 4],
+            [1, 4, 6, 4, 1],
+        ])/256)
+    img=cv2.imread(orange_dir)
+    new_img=conv2d.pyrDown(img)
+    cv2.imshow("img",img)
+    print(new_img.shape)
+    cv2.imshow("new_img",new_img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
